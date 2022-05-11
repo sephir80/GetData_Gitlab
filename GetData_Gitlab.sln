@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetData_Gitlab", "GetData_Gitlab.csproj", "{C1365900-EAB8-4831-A069-2637A75A3DF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1365900-EAB8-4831-A069-2637A75A3DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1365900-EAB8-4831-A069-2637A75A3DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1365900-EAB8-4831-A069-2637A75A3DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1365900-EAB8-4831-A069-2637A75A3DF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {34D3E6C2-86BB-4889-9FD2-74848E1C5681}
+	EndGlobalSection
+EndGlobal
