@@ -8,27 +8,67 @@ Get_Parameter parameter = new Get_Parameter("Parameter.cfg");
 
 string token = parameter.token;
 int nPages;
-List<Project> projects = new List<Project>();
+
 
 
 var client = new RestClient("http://192.168.1.33/");
 client.Authenticator = new JwtAuthenticator(token);
 
 
-//var response = await client.GetJsonAsync<List<Project>>("api/v4/projects");
-//api/v4/projects?search_namespaces=true&search=Flame_Italy/CM001
+// get project info *****************************************************
 
 var request = new RestRequest("api/v4/projects?simple=true", Method.Head);
 var head = await client.ExecuteAsync(request);
+
 nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Value.ToString());
 
+List<Project> projects = new List<Project>();
 
 for (int i = 1; i <= nPages; i++)
+{
+    Console.WriteLine("pagine progetti = " + i.ToString());
     projects.AddRange(await client.GetJsonAsync<List<Project>>("api/v4/projects?simple=true&page=" + i.ToString()));
+    Console.WriteLine(i.ToString());
+}
+Console.WriteLine("Progetti fininiti \n");
+// get merge info ***********************************************************
 
-List<Merge> listOfMergeRequestPerProject = new List<Merge>();
+request = new RestRequest("api/v4/merge_requests?scope=all", Method.Head);
+head = await client.ExecuteAsync(request);
+
+nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Value.ToString());
+
+List<Merge> merges = new List<Merge>();
+
+for (int i = 1; i <= nPages; i++)
+{
+    Console.WriteLine("pagine progetti = " + i.ToString());
+    merges.AddRange(await client.GetJsonAsync<List<Merge>>("api/v4/merge_requests?scope=all&page =" + i.ToString()));
+    Console.WriteLine(i.ToString());
+}
+Console.WriteLine("revisioni fininite \n");
+
+// update merge info per project*********************************************
 
 
+foreach (Merge merge in merges)
+{
+    if (merge.merged_by == null)
+        merge.merged_by = new User();
+    if (merge.state != "closed")
+    {
+        projects.Find(x => x.id==merge.project_id).rev_info = merge;
+
+    }
+}
+
+foreach (Project p in projects)
+{
+    Console.WriteLine(p.ToString());
+}
+
+
+/*
 foreach (Project p in projects)
 {
     request = new RestRequest("api/v4/projects/" + p.id + "/merge_requests?state=merged", Method.Head);
@@ -42,19 +82,4 @@ foreach (Project p in projects)
         listOfMergeRequestPerProject.Clear();
     }
 }
-
-
-
-/*
-"merged_by": {
-    "id": 8,
-            "name": "Giacomo Trecordi",
-            "username": "G.Trecordi",
-            "state": "active",
-            "avatar_url": "https://www.gravatar.com/avatar/fb94948dafc53059619ae8d334bc1779?s=80&d=identicon",
-            "web_url": "http://192.168.1.33/G.Trecordi"
 */
-
-async void get_Revision_info()
-{
-}
