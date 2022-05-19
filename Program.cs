@@ -4,12 +4,11 @@ using GetData_Gitlab;
 
 
 
+Get_Parameter parameter = new Get_Parameter("Parameter.cfg");
 
-string token = "oKPs5b5UkBNTXAoxs5nK";
+string token = parameter.token;
 int nPages;
 List<Project> projects = new List<Project>();
-//string user = "root";
-//string password = "L0c@l4223";
 
 
 var client = new RestClient("http://192.168.1.33/");
