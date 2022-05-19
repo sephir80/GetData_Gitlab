@@ -1,42 +1,51 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
+using GetData_Gitlab;
 
-//CPqiBXViBE4N87m5x6
-//oKPs5b5UkBNTXAoxs5nK
+
+
+
 string token = "oKPs5b5UkBNTXAoxs5nK";
-string user = "root";
-string password = "L0c@l4223";
+int nPages;
+List<Project> projects = new List<Project>();
+//string user = "root";
+//string password = "L0c@l4223";
+
 
 var client = new RestClient("http://192.168.1.33/");
 client.Authenticator = new JwtAuthenticator(token);
 
-//var request = new RestRequest("api/v4/projects/223",Method.Get)
-List<Booth> booths = new List<Booth>();
 
 //var response = await client.GetJsonAsync<List<Project>>("api/v4/projects");
 //api/v4/projects?search_namespaces=true&search=Flame_Italy/CM001
-var response = await client.GetJsonAsync<List<Project>>("api/v4/projects?search_namespaces=true&search=Flame_Italy/CM002");
-List<Production> items_approved = new List<Production>(); 
-foreach (var item in response)
+
+var request = new RestRequest("api/v4/projects?simple=true", Method.Head);
+var head = await client.ExecuteAsync(request);
+nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Value.ToString());
+
+
+for (int i = 1; i <= nPages; i++)
+    projects.AddRange(await client.GetJsonAsync<List<Project>>("api/v4/projects?simple=true&page=" + i.ToString()));
+
+List<Merge> listOfMergeRequestPerProject = new List<Merge>();
+
+
+foreach (Project p in projects)
 {
-    var merg_info = await client.GetJsonAsync<List<string>>("/api/v4/projects/" +item.id+ "/merge_requests?state=merged");
-    if (merg_info.Count == 0)
-        merg_info.Add("not approved");
-    items_approved.Add(new Production { id = item.id, name = item.name, description = item.description, web_url = item.web_url, merged_by= merg_info.First()  });
+    request = new RestRequest("api/v4/projects/" + p.id + "/merge_requests?state=merged", Method.Head);
+    head = await client.ExecuteAsync(request);
+    nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Value.ToString());
+    if (nPages > 0)
+    {
+        listOfMergeRequestPerProject.AddRange(await client.GetJsonAsync<List<Merge>>("api/v4/projects/" + p.id + "/merge_requests?state=merged"));
+        if (listOfMergeRequestPerProject.Count > 0)
+            projects.Find(x => x.id == p.id).rev_info = listOfMergeRequestPerProject.First();
+        listOfMergeRequestPerProject.Clear();
+    }
 }
 
-//booths.Add(new Booth { id = 1, name = "CM001", productions = response });
 
 
-Console.WriteLine(response);
-
-
-public class Booth
-{
-    public int id { get; set; }
-    public string name { get; set; }
-    public List<Production> productions{ get; set; }
-}
 /*
 "merged_by": {
     "id": 8,
@@ -47,23 +56,6 @@ public class Booth
             "web_url": "http://192.168.1.33/G.Trecordi"
 */
 
-public class Merged_by
+async void get_Revision_info()
 {
-    public string name { get; set; }
-
 }
-
-public class Production : Project
-{
-    public string merged_by;
-
-}
-
-public class Project
-{
-    public int id { get; set; }
-    public string description { get; set; }
-    public string name { get; set; }
-    public string web_url { get; set; }
-}
-
