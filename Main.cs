@@ -24,12 +24,21 @@ nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Va
 
 List<Project> projects = new List<Project>();
 
+Console.Write("Pagina Progetto caricata =  0 / " + nPages.ToString());
+ValueTuple<Int32, Int32> Point = Console.GetCursorPosition();
+Point.Item1 = Point.Item1 - 7;
+
 for (int i = 1; i <= nPages; i++)
 {
-    Console.WriteLine("pagine progetti = " + i.ToString());
+
     projects.AddRange(await client.GetJsonAsync<List<Project>>("api/v4/projects?simple=true&page=" + i.ToString()));
-    Console.WriteLine(i.ToString());
+    Console.SetCursorPosition(Point.Item1,Point.Item2);
+    Console.Write(String.Format("{0,2}",i));
+
 }
+Point.Item1 = 0;
+Point.Item2 = 1;
+Console.SetCursorPosition(Point.Item1,Point.Item2);
 Console.WriteLine("Progetti fininiti \n");
 // get merge info ***********************************************************
 
@@ -39,14 +48,21 @@ head = await client.ExecuteAsync(request);
 nPages = int.Parse(head.Headers.ToList().Find(x => x.Name == "X-Total-Pages").Value.ToString());
 
 List<Merge> merges = new List<Merge>();
+Console.Write("Pagina Revisioni caricata =  0 / " + nPages.ToString());
+Point = Console.GetCursorPosition();
+Point.Item1 = Point.Item1 - 7;
 
 for (int i = 1; i <= nPages; i++)
 {
-    Console.WriteLine("pagine progetti = " + i.ToString());
-    merges.AddRange(await client.GetJsonAsync<List<Merge>>("api/v4/merge_requests?scope=all&page =" + i.ToString()));
-    Console.WriteLine(i.ToString());
+    merges.AddRange(await client.GetJsonAsync<List<Merge>>("api/v4/merge_requests?scope=all&page=" + i.ToString()));
+    Console.SetCursorPosition(Point.Item1, Point.Item2);
+    Console.Write(String.Format("{0,2}", i));
 }
+Point.Item1 = 0;
+Point.Item2 = 3;
+Console.SetCursorPosition(Point.Item1, Point.Item2);
 Console.WriteLine("revisioni fininite \n");
+
 
 // update merge info per project*********************************************
 
@@ -55,6 +71,8 @@ foreach (Merge merge in merges)
 {
     if (merge.merged_by == null)
         merge.merged_by = new User();
+
+
     if (merge.state != "closed")
     {
         projects.Find(x => x.id==merge.project_id).rev_info = merge;
@@ -62,10 +80,9 @@ foreach (Merge merge in merges)
     }
 }
 
-foreach (Project p in projects)
-{
-    Console.WriteLine(p.ToString());
-}
+SaveOnFile mergesToSave = new SaveOnFile(merges,"pluto.csv");
+SaveOnFile projectstoSave = new SaveOnFile(projects, "pippo.csv");
+
 
 
 /*
