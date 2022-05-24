@@ -16,7 +16,7 @@ namespace GetData_Gitlab
         public Merge rev_info { get; set; } = new Merge();
         override public string ToString()
         {
-            return id.ToString()+","+name+","+ web_url + ","+@namespace.ToString()+","+rev_info.ToString();
+            return id.ToString()+"; "+name+"; "+ web_url + "; "+@namespace.ToString()+"; "+rev_info.ToString();
         }
     }
 
@@ -26,7 +26,7 @@ namespace GetData_Gitlab
         public string name { get; set; }
         override public string ToString()
         {
-            return id.ToString() + "," + name;
+            return id.ToString() + "; " + name;
         }
 
 
@@ -34,12 +34,22 @@ namespace GetData_Gitlab
 
     public class Merge
     {
+        public int id { get; set; }
         public int project_id { get; set; }
-        public string state { get; set; } = "";
-        public User merged_by { get; set; } = new User();
+        public string state { get; set; }
+        public User merged_by { get; set; }
+
+        public Merge()
+        {
+            id = 0;
+            project_id = 0;
+            state = "";
+            merged_by = new User ();
+
+        }
         override public string ToString()
         {
-            return project_id.ToString() + "," + state + ","+ merged_by.ToString();
+            return id.ToString()+"; "+project_id.ToString() + "; " + state + "; "+ merged_by.ToString();
         }
 
     }
@@ -47,6 +57,11 @@ namespace GetData_Gitlab
     public class User
     {
         public string name { get; set; } = "";
+
+        public User()
+        {
+            name = "";
+        }
         override public string ToString()
         {
             return name;
