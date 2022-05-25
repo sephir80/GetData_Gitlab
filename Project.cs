@@ -38,6 +38,7 @@ namespace GetData_Gitlab
         public int project_id { get; set; }
         public string state { get; set; }
         public User merged_by { get; set; }
+        public string merged_at { get; set; }
 
         public Merge()
         {
@@ -45,11 +46,11 @@ namespace GetData_Gitlab
             project_id = 0;
             state = "";
             merged_by = new User ();
-
+            merged_at = "";
         }
         override public string ToString()
         {
-            return id.ToString()+"; "+project_id.ToString() + "; " + state + "; "+ merged_by.ToString();
+            return id.ToString()+"; "+project_id.ToString() + "; " + state + "; "+ merged_by.ToString() + "; "+ merged_at;
         }
 
     }
