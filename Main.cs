@@ -36,6 +36,7 @@ for (int i = 1; i <= nPages; i++)
     Console.Write(String.Format("{0,2}",i));
 
 }
+
 Point.Item1 = 0;
 Point.Item2 = 1;
 Console.SetCursorPosition(Point.Item1,Point.Item2);
@@ -75,8 +76,12 @@ foreach (Merge merge in merges)
 
     if (merge.state != "closed")
     {
-        projects.Find(x => x.id==merge.project_id).rev_info = merge;
-
+        Merge m = new Merge();
+        m=projects.Find(x => x.id == merge.project_id).rev_info;
+        if ((m.state == merge.state) & (m.id > merge.id))
+            projects.Find(x => x.id == merge.project_id).rev_info=m;
+        else
+            projects.Find(x => x.id == merge.project_id).rev_info = merge;
     }
 }
 
