@@ -1,7 +1,7 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
 using GetData_Gitlab;
-
+using System;
 
 
 Get_Parameter parameter = new Get_Parameter("Parameter.cfg");
@@ -84,9 +84,8 @@ foreach (Merge merge in merges)
             projects.Find(x => x.id == merge.project_id).rev_info = merge;
     }
 }
-
-SaveOnFile mergesToSave = new SaveOnFile(merges,"pluto.csv");
-SaveOnFile projectstoSave = new SaveOnFile(projects, "pippo.csv");
+//string pathToSave = @"\\192.168.1.89\gest\xml\ROBOT\ROBOT.csv";
+SaveOnFile projectstoSave = new SaveOnFile(projects, parameter.pathToSave);
 
 
 
