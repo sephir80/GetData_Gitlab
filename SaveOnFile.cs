@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-
-
-namespace GetData_Gitlab
+﻿namespace GetData_Gitlab
 {
     public class SaveOnFile
     {
@@ -18,7 +10,7 @@ namespace GetData_Gitlab
                 buffer.Add(p.ToString());
             if (File.Exists(nomeFile))
                 File.Delete(nomeFile);
-            
+
             File.WriteAllLines(nomeFile, buffer);
 
         }
